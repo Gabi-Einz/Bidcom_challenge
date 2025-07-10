@@ -1,2 +1,0 @@
-export const TASK_CREATED = 'TASK_CREATED';
-export const TASK_COMPLETED = 'TASK_COMPLETED';
