@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "npm run build && nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -20,12 +20,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs -d ./src/database/client/datasource.ts",
     "migration:create": "ts-node node_modules/.bin/typeorm migration:create ./src/database/migrations",
-    "migration:generate": "ts-node -r tsconfig-paths/register node_modules/.bin/typeorm migration:generate -d src/database/client/datasource.ts src/database/migrations/Migration",
-    "migration:generate2": "npx -r dotenv/config typeorm migration:generate -d dist/database/client/datasource.js src/database/migrations",
-    "migration:generate3": "npx ts-node -r dotenv/config ./node_modules/typeorm/cli.js migration:generate -d src/database/client/datasource.ts src/database/migrations",
-    "migration:generate4": "npm run typeorm -- migration:generate",
-    "migration:run": "ts-node -r tsconfig-paths/register node_modules/.bin/typeorm migration:run -d src/database/client/datasource.ts",
-    "migration:revert": "ts-node -r tsconfig-paths/register node_modules/.bin/typeorm migration:revert -d src/database/client/datasource.ts"
+    "migration:generate": "npm run typeorm -- migration:generate",
+    "migration:run": "npm run typeorm -- migration:run",
+    "migration:revert": "npm run typeorm -- migration:revert"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
