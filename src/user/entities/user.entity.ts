@@ -1,4 +1,4 @@
-import { TaskEntity } from '../../task/entities/task.entity';
+import { MaskEntity } from '../../mask/entities/mask.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('user')
@@ -15,6 +15,6 @@ export class UserEntity {
   @Column()
   role: string;
 
-  @OneToMany(() => TaskEntity, (task) => task.user)
-  tasks: TaskEntity[];
+  @OneToMany(() => MaskEntity, (mask) => mask.user)
+  masks: MaskEntity[];
 }

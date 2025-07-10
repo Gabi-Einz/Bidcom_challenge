@@ -3,16 +3,16 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { TaskModule } from './task/task.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { DatabaseModule } from './database/database.module';
+import { MaskModule } from './mask/mask.module';
 @Module({
   imports: [
     AuthModule,
     UserModule,
-    TaskModule,
+    MaskModule,
     EventEmitterModule.forRoot(),
     ThrottlerModule.forRoot({
       throttlers: [
