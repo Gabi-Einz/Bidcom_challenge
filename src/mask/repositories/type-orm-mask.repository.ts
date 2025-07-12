@@ -21,4 +21,15 @@ export class TypeOrmMaskRepository implements IMaskRepository<MaskEntity> {
       where: { id, user: { id: userId } },
     });
   }
+
+  async findOneOriginUrl(link: string): Promise<Partial<MaskEntity> | null> {
+    return this.repository.findOne({
+      select: ['id', 'target', 'redirectAmount', 'valid'],
+      where: { link },
+    });
+  }
+
+  async updateRedirectAmountById(id: number, newAmount: number): Promise<void> {
+    await this.repository.update(id, { redirectAmount: newAmount });
+  }
 }

@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   UseGuards,
   HttpCode,
+  Res,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/authentication/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/authorization/guards/role.guard';
@@ -15,18 +16,18 @@ import { Role } from 'src/auth/authorization/enums/role.enum';
 import { HttpStatusCode } from 'src/shared/enums/http-status-code.enum';
 import { SkipThrottle } from '@nestjs/throttler';
 import { CurrentUser } from 'src/auth/decorators/auth.decorator';
-import { User } from 'src/user/models/User';
 import { MaskCreationRequestDto } from './models/mask-creation-request.dto';
-import { MaskService } from './mask.service';
+import { MaskService } from './services/mask.service';
 import { UserEntity } from 'src/user/entities/user.entity';
+import { Response } from 'express';
 
 @SkipThrottle()
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('masks')
+@Controller()
 export class MaskController {
   constructor(private readonly MaskService: MaskService) {}
 
-  @Post()
+  @Post('masks')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatusCode.CREATED)
   @Roles([Role.ADMIN, Role.USER])
   async create(
@@ -37,12 +38,21 @@ export class MaskController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatusCode.OK)
   @Roles([Role.ADMIN, Role.USER])
   async findOne(
     @Param('id', ParseIntPipe) id: number,
-    @CurrentUser() user: User,
+    @CurrentUser() user: UserEntity,
   ) {
     return await this.MaskService.findOneByIdAndUserId(id, user.id);
+  }
+
+  @Get('l/:code')
+  @HttpCode(HttpStatusCode.OK)
+  @Roles([Role.ADMIN, Role.USER])
+  async redirect(@Param('code') code: string, @Res() response: Response) {
+    const originUrl: string = await this.MaskService.findOneOriginUrl(code);
+    return response.redirect(originUrl);
   }
 }

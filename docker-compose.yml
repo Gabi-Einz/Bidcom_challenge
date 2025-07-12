@@ -26,6 +26,7 @@ services:
       - JWT_REFRESH_TOKEN_EXPIRE_IN=${JWT_REFRESH_TOKEN_EXPIRE_IN}
       - THROTTLER_LIMIT=${THROTTLER_LIMIT}
       - THROTTLER_TTL=${THROTTLER_TTL}
+      - BASE_URL=${BASE_URL}
     restart: unless-stopped
   # my_database:
   #   image: postgres
