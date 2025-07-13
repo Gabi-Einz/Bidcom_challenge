@@ -8,6 +8,7 @@ import {
   UseGuards,
   HttpCode,
   Res,
+  Put,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/authentication/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/authorization/guards/role.guard';
@@ -37,7 +38,18 @@ export class MaskController {
     return await this.MaskService.create(request, user);
   }
 
-  @Get(':id')
+  @Put('masks/:id/invalidation')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @HttpCode(HttpStatusCode.NO_CONTENT)
+  @Roles([Role.ADMIN, Role.USER])
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: UserEntity,
+  ) {
+    return await this.MaskService.update(id, user);
+  }
+
+  @Get('masks/:id/stats')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatusCode.OK)
   @Roles([Role.ADMIN, Role.USER])

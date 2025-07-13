@@ -32,4 +32,7 @@ export class TypeOrmMaskRepository implements IMaskRepository<MaskEntity> {
   async updateRedirectAmountById(id: number, newAmount: number): Promise<void> {
     await this.repository.update(id, { redirectAmount: newAmount });
   }
+  async invalidate(id: number, valid: boolean): Promise<void> {
+    await this.repository.update(id, { valid });
+  }
 }

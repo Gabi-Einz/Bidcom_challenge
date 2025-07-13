@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { MaskCreationRequestDto } from '../models/mask-creation-request.dto';
 import { MaskEntity } from '../entities/mask.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
@@ -20,7 +25,7 @@ export class MaskService {
       userId,
     );
     if (!mask) {
-      throw new NotFoundException('Task not found');
+      throw new NotFoundException('Mask not found');
     }
     return mask;
   }
@@ -29,7 +34,7 @@ export class MaskService {
     const maskEntity: Partial<MaskEntity> | null =
       await this.iMaskRepository.findOneOriginUrl(maskedLink);
     if (!maskEntity || !maskEntity.valid) {
-      throw new NotFoundException('not found');
+      throw new NotFoundException('Not found');
     }
     const { id, redirectAmount } = maskEntity;
     await this.iMaskRepository.updateRedirectAmountById(
@@ -39,12 +44,23 @@ export class MaskService {
     return maskEntity.target ?? '';
   }
 
+  async update(id: number, user: UserEntity): Promise<void> {
+    const maskEntity: Partial<MaskEntity> | null =
+      await this.iMaskRepository.findOneByIdAndUserId(id, user.id);
+    if (!maskEntity) {
+      throw new NotFoundException('Not found');
+    }
+    if (!maskEntity.valid) {
+      throw new BadRequestException('The link is already invalid');
+    }
+    await this.iMaskRepository.invalidate(id, false);
+  }
+
   async create(createTaskDto: MaskCreationRequestDto, user: UserEntity) {
     const { url } = createTaskDto;
     const isValid: boolean =
       this.iUrlService.isValidFormat(url) &&
       (await this.iUrlService.isValidDomain(url));
-    console.info('isValid-->', isValid);
     const maskEntity: MaskEntity = new MaskEntity();
     maskEntity.link = this.build();
     maskEntity.valid = isValid;
