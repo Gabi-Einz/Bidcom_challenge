@@ -28,6 +28,14 @@ export class MaskEntity {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
+  @Column({
+    name: 'expires_at',
+    type: 'datetime',
+    nullable: true,
+    default: null,
+  })
+  expiresAt: Date | null;
+
   @ManyToOne(() => UserEntity, (user) => user.masks, { nullable: true })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user?: UserEntity;

@@ -24,7 +24,7 @@ export class TypeOrmMaskRepository implements IMaskRepository<MaskEntity> {
 
   async findOneOriginUrl(link: string): Promise<Partial<MaskEntity> | null> {
     return this.repository.findOne({
-      select: ['id', 'target', 'redirectAmount', 'valid'],
+      select: ['id', 'target', 'redirectAmount', 'valid', 'expiresAt'],
       where: { link },
     });
   }

@@ -11,6 +11,7 @@ import { IMaskRepository } from '../interfaces/imask.repository';
 import { IUrlService } from '../interfaces/iurl.service';
 import { safeGetConfig } from 'src/shared/utils/ConfigHelper';
 import { randomBytes } from 'crypto';
+import { DateUtils } from 'src/shared/utils/date.utils';
 @Injectable()
 export class MaskService {
   constructor(
@@ -29,14 +30,23 @@ export class MaskService {
     }
     return mask;
   }
-  async findOneOriginUrl(code: string): Promise<string> {
-    const maskedLink = `${safeGetConfig('BASE_URL')}/l/${code}`;
+  async findOneOriginUrl(code: string, password: string): Promise<string> {
+    const maskedLink = password
+      ? `${safeGetConfig('BASE_URL')}/l/${code}?password=${password}`
+      : `${safeGetConfig('BASE_URL')}/l/${code}`;
     const maskEntity: Partial<MaskEntity> | null =
       await this.iMaskRepository.findOneOriginUrl(maskedLink);
     if (!maskEntity || !maskEntity.valid) {
       throw new NotFoundException('Not found');
     }
-    const { id, redirectAmount } = maskEntity;
+    const { id, redirectAmount, expiresAt } = maskEntity;
+    const offsetArgentinaHours: number = -3;
+    const currentDate: Date =
+      DateUtils.getCurrentDateByUTCoffset(offsetArgentinaHours);
+    if (expiresAt && currentDate.getTime() > expiresAt.getTime()) {
+      await this.iMaskRepository.invalidate(id!, false);
+      throw new BadRequestException('The link is expired');
+    }
     await this.iMaskRepository.updateRedirectAmountById(
       id!,
       redirectAmount! + 1,
@@ -57,22 +67,24 @@ export class MaskService {
   }
 
   async create(createTaskDto: MaskCreationRequestDto, user: UserEntity) {
-    const { url } = createTaskDto;
+    const { url, password, expiresAt } = createTaskDto;
     const isValid: boolean =
       this.iUrlService.isValidFormat(url) &&
       (await this.iUrlService.isValidDomain(url));
     const maskEntity: MaskEntity = new MaskEntity();
-    maskEntity.link = this.build();
+    maskEntity.link = this.build(password);
     maskEntity.valid = isValid;
     maskEntity.target = createTaskDto.url;
     maskEntity.redirectAmount = 0;
+    maskEntity.expiresAt = expiresAt ? new Date(expiresAt) : null;
     maskEntity.user = user;
     const result = await this.iMaskRepository.create(maskEntity);
     return result;
   }
-  build = (): string => {
+  build = (password: string | undefined): string => {
     const bytesSize = 4;
     const code: string = randomBytes(bytesSize).toString('base64url');
-    return `${safeGetConfig('BASE_URL')}/l/${code}`;
+    const maskedUrl = `${safeGetConfig('BASE_URL')}/l/${code}`;
+    return password ? maskedUrl.concat(`?password=${password}`) : maskedUrl;
   };
 }

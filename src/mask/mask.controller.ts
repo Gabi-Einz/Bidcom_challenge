@@ -9,6 +9,7 @@ import {
   HttpCode,
   Res,
   Put,
+  Query,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/authentication/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/authorization/guards/role.guard';
@@ -63,8 +64,15 @@ export class MaskController {
   @Get('l/:code')
   @HttpCode(HttpStatusCode.OK)
   @Roles([Role.ADMIN, Role.USER])
-  async redirect(@Param('code') code: string, @Res() response: Response) {
-    const originUrl: string = await this.MaskService.findOneOriginUrl(code);
+  async redirect(
+    @Param('code') code: string,
+    @Query('password') password: string,
+    @Res() response: Response,
+  ) {
+    const originUrl: string = await this.MaskService.findOneOriginUrl(
+      code,
+      password,
+    );
     return response.redirect(originUrl);
   }
 }
