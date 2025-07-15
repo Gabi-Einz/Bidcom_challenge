@@ -1,60 +1,52 @@
-## Nestjs template
+## Bidcom challenge
+Link Tracker is a system to mask URLs and can get analityc of the amount of times that the link was called.
 
 ## Features
-- Get users
-- Get one user
-## Prerequisites  
+- Create mask by link
+- Invalidate mask
+- Get mask stats
+- Redirect link
+
+## Pre-Requisites  
 Install docker  
 Install docker-compose  
 Use node v20.12.0
 Install nestjs: npm install -g @nestjs/cli
-Free ports: 3000, 5432 and 6379   
+Free ports: 3000 and 3306   
 
-## Installation  
+## How do you run the app?  
+``` 
+1- Copy and paste ".env" file in the root folder of the project.  
+2- chmod 711 ./up_dev.sh
+3- ./up_dev.sh
+```
 
-Execute the next commands:  
-1- Download project: git clone https://github.com/Gabi-Einz/TaskManagement.git  
-2- Switch to develop branch: git checkout develop  
-3- Copy and paste ".env" file in the root folder of the project.  
-4- Install dependencies: npm install  
-5- Create redis and postgresql instances: docker-compose up -d  
-6- Verify if redis and postgresql containers is ok: docker ps  
-7- Execute migrations: npx prisma migrate dev --name init  
-8- Execute SQL queries, insert mock users in postgresql database using file "_User__202504100054.sql"  
-
-## How to run the APP?
-```
-npm run start 
-
-chmod 711 ./up_dev.sh
-./up_dev.sh
-```
-## How to run the tests?
-```
-chmod 711 ./up_test.sh
-./up_test.sh
-```
-## How to use?  
-1- import "thunder-collection_postman_TaskManagement.json" file using client like postman.  
+## How do you use the app?  
+1- import "XXX.json" file using client like Thunder Client or Postman. Also, you can use swagger API (http://localhost:3000/api)  
+2- In order to test the APIs, the API execution order is:
+    1. API POST /auth/singUp (this API create an user)
+    2. API POST /auth/login (this API create an access token that you can use to consume mask APIs)
+    3. Now you can consume any Mask APIs..
 
 ## Areas to improve
-- Error handling could be improved
+- add unit tests and integration tests 
 - a seed migration would be useful to have an already working app with data
-
-## Errors to be fixed
-
--Docker app is not running correctly
+- encrypt password input and save it in a new field.
+- deploy the application in some cloud platform like Heroku.
+- add CI/CD pipeline to automatize deployment.
 
 ## Techs
 - NestJs
 - NodeJs
-- Prisma
-- Postgres
-- Redis
+- TypeORM
+- MariaDb
 
 ## Decision made
+- I used authentication and authorization  implementation in order to secure the APIs
 - Clean Architecture: to be able to handle further changes in the future in a proper way.
+- TypeORM: Because it is the already integrated ORM in the Nest Framework and it is the most popular ORM so it is easy to find fixes and people that know how to use it
+- Docker: To make portable
 
 ## Route
 
-- API swagger:
+- Local: [API Swagger](http://localhost:3000/api)
