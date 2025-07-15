@@ -46,6 +46,7 @@ Free ports: 3000 and 3306
 - Clean Architecture: to be able to handle further changes in the future in a proper way.
 - TypeORM: Because it is the already integrated ORM in the Nest Framework and it is the most popular ORM so it is easy to find fixes and people that know how to use it
 - Docker: To make portable
+- It's a bad practice upload the .env file to the repository, but in this case, it is just a challenge, so it is easier to configure the application.  
 
 ## Route
 
