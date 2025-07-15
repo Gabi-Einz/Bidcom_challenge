@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { TokenResponse } from './models/TokenResponse';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -54,6 +58,10 @@ export class AuthService {
   async signUp(signUpDto: SignUpDto) {
     const saltRounds = 10;
     const encryptedPassword: string = hashSync(signUpDto.password, saltRounds);
+    const user = await this.userService.findOneByName(signUpDto.userName);
+    if (user) {
+      throw new BadRequestException('user already exists');
+    }
     return await this.userService.create({
       name: signUpDto.userName,
       password: encryptedPassword,
