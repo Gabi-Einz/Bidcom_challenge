@@ -16,7 +16,7 @@ Free ports: 3000 and 3306
 
 ## How do you run the app?  
 ``` 
-1- Copy and paste ".env" file in the root folder of the project.  
+1- Rename ".env.example" file to ".env".  
 2- chmod 711 ./up_dev.sh
 3- ./up_dev.sh
 ```
