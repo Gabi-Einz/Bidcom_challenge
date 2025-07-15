@@ -17,7 +17,7 @@ export class MaskEntity {
   target: string;
 
   @Column({ name: 'link' })
-  link?: string;
+  link: string;
 
   @Column({ name: 'valid' })
   valid: boolean;
